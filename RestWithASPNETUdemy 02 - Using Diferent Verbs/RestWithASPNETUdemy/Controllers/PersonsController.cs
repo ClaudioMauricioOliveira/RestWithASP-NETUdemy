@@ -1,45 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using RestWithASPNETUdemy.Model;
+using RestWithASPNETUdemy.Services;
 
 namespace RestWithASPNETUdemy.Controllers
 {
+    /*
+     * Mapeia as requisições de http:localhost:{porta}/api/person 
+     * Por padrão o ASP .NET Core mapeia todas as classes que extendem Controller
+     * pegando a primeira parte do nome da classe em lower case [Person]Controller
+     * e expõe como o endpoint REST
+     */
+
     [Route("api/[controller]")]
     [ApiController]
     public class PersonsController : ControllerBase
     {
-        // GET api/values
+        //Declaração do serviço usado
+        private IPersonService _personService;
+
+        /*
+         * Injeção de uma instancia de IPersionService ao criar
+         * uma instancia de PersonController
+         */
+        public PersonsController(IPersonService personService)
+        {
+            _personService = personService;
+        }
+
+        // Mapeia as requisições GET para http://localhost:{porta}/api/person/
+        // GET sem parâmentros para o FindAll --> Busca Todos
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(_personService.FindAll());
         }
 
-        // GET api/values/5
+        //Mapeia as requisições GET para http://localhost:{porta}/api/person/{id}
+        //recebendo um ID como no Path da requisição
+        //Get com parâmetros para o FindById --> Busca Por ID
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public IActionResult Get(long id)
         {
-            return "value";
+            var person = _personService.FindById(id);
+            if (person == null) return NotFound();
+            
+            return Ok(person);
         }
 
-        // POST api/values
+        //Mapeia as requisições POST para http://localhost:{porta}/api/person/
+        //O [FromBody] consome o Objeto JSON enviado no corpo da requisição
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] Person person)
         {
+            if (person == null) return NotFound();
+            return new ObjectResult(_personService.Create(person));
         }
 
-        // PUT api/values/5
+        //Mapeia as requisições PUT para http://localhost:{porta}/api/person/{id}
+        //O [FromBody] consome o Objeto JSON enviado no corpo da requisição
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Person person)
         {
+            if (person == null) return NotFound();
+            return new ObjectResult(_personService.Update(person));
         }
 
-        // DELETE api/values/5
+        //Mapeia as requisições DELETE para http://localhost:{porta}/api/person/{id}
+        //recebendo um ID como no Path da requisição
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            _personService.Delete(id);
+            return NoContent();
         }
     }
 }
