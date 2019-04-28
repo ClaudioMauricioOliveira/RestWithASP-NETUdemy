@@ -5,13 +5,13 @@ using System.Threading;
 using RestWithASPNETUdemy.Model;
 using RestWithASPNETUdemy.Model.Context;
 
-namespace RestWithASPNETUdemy.Services.Implementatitons
+namespace RestWithASPNETUdemy.Repository.Implementatitons
 {
-    public class PersonServiceImpl : IPersonService
+    public class PersonRepositoryImpl : IPersonRepository
     {
 
         private MySQLContext _context;
-        public PersonServiceImpl(MySQLContext context)
+        public PersonRepositoryImpl(MySQLContext context)
         {
             _context = context;
         }
@@ -54,6 +54,11 @@ namespace RestWithASPNETUdemy.Services.Implementatitons
             }
         }
 
+        public bool Exists(long? id)
+        {
+            throw new NotImplementedException();
+        }
+
         // Método responsável por retornar todas as pessoas
         public List<Person> FindAll()
         {
@@ -88,7 +93,7 @@ namespace RestWithASPNETUdemy.Services.Implementatitons
 
         }
 
-        private bool Exist(long? id)
+        public bool Exist(long? id)
         {
             return _context.Persons.Any(p => p.Id.Equals(id));
         }
