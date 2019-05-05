@@ -74,11 +74,12 @@ namespace RestWithASPNETUdemy.Repository.Implementatitons
         // Método responsável por atualizar uma pessoa
         public Person Update(Person person)
         {
-            if (!Exist(person.Id))
-            {
-                return new Person();
-            }
+            // Verificamos se a pessoa existe na base
+            // Se não existir retornamos uma instancia vazia de pessoa
+            if (!Exists(person.Id)) return null;
 
+            // Pega o estado atual do registro no banco
+            // seta as alterações e salva
             var result = _context.Persons.SingleOrDefault(p => p.Id.Equals(person.Id));
             try
             {

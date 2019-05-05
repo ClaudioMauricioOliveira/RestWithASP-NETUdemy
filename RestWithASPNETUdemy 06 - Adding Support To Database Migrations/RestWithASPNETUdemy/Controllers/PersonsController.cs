@@ -56,13 +56,15 @@ namespace RestWithASPNETUdemy.Controllers
             return new ObjectResult(_personBusiness.Create(person));
         }
 
-        //Mapeia as requisições PUT para http://localhost:{porta}/api/person/{id}
+        //Mapeia as requisições PUT para http://localhost:{porta}/api/persons/v1/
         //O [FromBody] consome o Objeto JSON enviado no corpo da requisição
         [HttpPut()]
-        public IActionResult Put(int id, [FromBody] Person person)
+        public IActionResult Put([FromBody] Person person)
         {
-            if (person == null) return NotFound();
-            return new ObjectResult(_personBusiness.Update(person));
+            if (person == null) return BadRequest();
+            var updatedPerson = _personBusiness.Update(person);
+            if (updatedPerson == null) return BadRequest();
+            return new ObjectResult(updatedPerson);
         }
 
         //Mapeia as requisições DELETE para http://localhost:{porta}/api/person/{id}
